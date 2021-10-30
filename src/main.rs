@@ -8,10 +8,9 @@ fn main() -> AnyhowResult<()> {
     let git_repo = Command::new("git")
         .args(&["config", "--get", "remote.origin.url"])
         .stdout(Stdio::piped())
-        .output()
-        .unwrap();
+        .output()?;
 
-    let stdout = String::from_utf8(git_repo.stdout).unwrap();
+    let stdout = String::from_utf8(git_repo.stdout)?;
     let parsed_url = parse_url_from_git(stdout)?;
     webbrowser::open(&parsed_url)?;
     Ok(())
