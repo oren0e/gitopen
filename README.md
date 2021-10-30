@@ -7,6 +7,8 @@ Currently tested only on mac (prior to M1 chip).
 
 # Installation
 
+Note: You have to have rust installed with cargo to be able to install this utility.
+
 1. Clone the repo
 2. Run `make install` from the repo's directory
 
