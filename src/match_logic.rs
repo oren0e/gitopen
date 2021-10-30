@@ -17,3 +17,22 @@ pub fn parse_url_from_git(s: String) -> AnyhowResult<String> {
 
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_github_parsing() {
+        let git_repo = "git@github.com:dtolnay/anyhow.git".to_string();
+        let result_url = parse_url_from_git(git_repo).unwrap();
+        assert_eq!(result_url, "https://github.com/dtolnay/anyhow");
+    }
+
+    #[test]
+    fn test_gitlab_parsing() {
+        let git_repo = "git@git.foo.com:project/repo.git".to_string();
+        let result_url = parse_url_from_git(git_repo).unwrap();
+        assert_eq!(result_url, "https://git.foo.com/project/repo");
+    }
+}
