@@ -1,7 +1,6 @@
 use crate::match_logic::parse_url_from_git;
 use anyhow::Result as AnyhowResult;
 use std::process::{Command, Stdio};
-use webbrowser;
 
 mod match_logic;
 
