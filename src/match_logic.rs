@@ -15,13 +15,7 @@ pub fn parse_url_from_git(s: String) -> AnyhowResult<String> {
         .captures(&s)
         .ok_or_else(|| anyhow!("Git repository not found"))?;
     if is_https(&url_parts[1]) {
-        let re = Regex::new(r"^(.*)(/.*)")?;
-        let matched = re
-            .captures(&url_parts[7])
-            .ok_or_else(|| anyhow!("Regex error capturing https domain"))?;
-        let result: String =
-            "https://".to_string() + &matched[1].to_string() + &matched[2].to_string();
-        return Ok(result);
+        return Ok(s.trim().to_string());
     }
     let domain_re = Regex::new(r".*@(.*)$")?;
     let match_domain = domain_re
@@ -49,7 +43,7 @@ mod tests {
     fn test_github_https_parsing() {
         let git_repo = "https://github.com/oren0e/gitopen.git".to_string();
         let result_url = parse_url_from_git(git_repo).unwrap();
-        assert_eq!(result_url, "https://github.com/oren0e/gitopen");
+        assert_eq!(result_url, "https://github.com/oren0e/gitopen.git");
     }
 
     #[test]
