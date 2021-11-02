@@ -6,7 +6,7 @@ fn is_https(s: &str) -> bool {
     if s.starts_with("http") {
         return true;
     }
-    return false;
+    false
 }
 
 pub fn parse_url_from_git(s: String) -> AnyhowResult<String> {
