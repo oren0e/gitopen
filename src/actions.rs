@@ -27,16 +27,11 @@ pub fn push_and_open_pr() -> AnyhowResult<()> {
         .args(&["push", "origin", &current_branch_text_stripped])
         .stderr(Stdio::piped())
         .output()?;
-    let pr_re = Regex::new(&format!(
-        r"remote:.*(https.*{}).*\n",
-        current_branch_text_stripped
-    ))?;
+    let pr_re = Regex::new(r"remote:.*(https\S*)\s*\n")?;
     let output_from_push_text = String::from_utf8(output_from_push.stderr)?;
-    println!("{:?}", &output_from_push_text);
     let captured = pr_re
         .captures(&output_from_push_text)
         .ok_or_else(|| anyhow!("Error capturing PR url"))?;
-    println!("{:?}", &captured[1]);
     webbrowser::open(&captured[1])?;
     Ok(())
 }
@@ -59,13 +54,7 @@ remote:      https://github.com/tobiasbueschel/awesome-pokemon/pull/new/feat/add
 remote:
 To github.com:tobiasbueschel/awesome-pokemon.git
  * [new branch]      feat/add-more-pokemons -> feat/add-more-pokemons"#;
-        let current_branch = "feat/add-more-pokemons\n";
-        let current_branch_text_stripped = current_branch.trim();
-        let re = Regex::new(&format!(
-            r"remote:.*(https.*{}).*\n",
-            current_branch_text_stripped
-        ))
-        .unwrap();
+        let re = Regex::new(r"remote:.*(https\S*)\s*\n").unwrap();
         let captured = re.captures(&output).unwrap();
         println!("{:?}", &captured[1]);
         assert!(&captured[1].starts_with("https"));
