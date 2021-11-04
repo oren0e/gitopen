@@ -1,5 +1,5 @@
 extern crate clap;
-use clap::{App, Arg};
+use clap::{crate_version, App, Arg};
 
 use crate::actions::{open_repo, push_and_open_pr};
 use anyhow::Result as AnyhowResult;
@@ -9,7 +9,7 @@ mod match_logic;
 
 fn main() -> AnyhowResult<()> {
     let matches = App::new("Gitopen")
-        .version("1.1.0")
+        .version(crate_version!())
         .author("Oren Epshtain")
         .about("Utility to open repo from terminal and pull requests after push")
         .arg(
