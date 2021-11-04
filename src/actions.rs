@@ -59,7 +59,13 @@ remote:      https://github.com/tobiasbueschel/awesome-pokemon/pull/new/feat/add
 remote:
 To github.com:tobiasbueschel/awesome-pokemon.git
  * [new branch]      feat/add-more-pokemons -> feat/add-more-pokemons"#;
-        let re = Regex::new(r"remote:.*(https.*)\n.*").unwrap();
+        let current_branch = "feat/add-more-pokemons\n";
+        let current_branch_text_stripped = current_branch.trim();
+        let re = Regex::new(&format!(
+            r"remote:.*(https.*{}).*\n",
+            current_branch_text_stripped
+        ))
+        .unwrap();
         let captured = re.captures(&output).unwrap();
         println!("{:?}", &captured[1]);
         assert!(&captured[1].starts_with("https"));
