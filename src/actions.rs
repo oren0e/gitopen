@@ -22,15 +22,21 @@ pub fn push_and_open_pr() -> AnyhowResult<()> {
         .stdout(Stdio::piped())
         .output()?;
     let current_branch_text = &String::from_utf8(current_branch.stdout)?;
+    let current_branch_text_stripped = current_branch_text.trim();
     let output_from_push = Command::new("git")
-        .args(&["push", "origin", &current_branch_text.trim()])
-        .stdout(Stdio::piped())
+        .args(&["push", "origin", &current_branch_text_stripped])
+        .stderr(Stdio::piped())
         .output()?;
-    let pr_re = Regex::new(r"remote:.*(https.*)\n.*")?;
-    let output_from_push_text = String::from_utf8(output_from_push.stdout)?;
+    let pr_re = Regex::new(&format!(
+        r"remote:.*(https.*{}).*\n",
+        current_branch_text_stripped
+    ))?;
+    let output_from_push_text = String::from_utf8(output_from_push.stderr)?;
+    println!("{:?}", &output_from_push_text);
     let captured = pr_re
         .captures(&output_from_push_text)
         .ok_or_else(|| anyhow!("Error capturing PR url"))?;
+    println!("{:?}", &captured[1]);
     webbrowser::open(&captured[1])?;
     Ok(())
 }
