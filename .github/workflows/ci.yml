@@ -13,10 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: dtolnay/rust-toolchain@1.51.0
+      with:
+        components: clippy, rustfmt
     - name: Print rust version
       run: rustup show
-    - name: Add fmt and clippy
-      run: rustup component add rustfmt clippy
     - name: Print clippy version
       run: cargo clippy --version
     - name: Lint
