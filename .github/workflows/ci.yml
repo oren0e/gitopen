@@ -13,8 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Print rust version
+      run: rustup show
     - name: Add fmt and clippy
       run: rustup component add rustfmt clippy
+    - name: Print clippy version
+      run: cargo clippy --version
     - name: Lint
       run: make lint 
     - name: Run tests
