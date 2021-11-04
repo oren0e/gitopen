@@ -21,8 +21,9 @@ pub fn push_and_open_pr() -> AnyhowResult<()> {
         .args(&["branch", "--show-current"])
         .stdout(Stdio::piped())
         .output()?;
+    let current_branch_text = &String::from_utf8(current_branch.stdout)?;
     let output_from_push = Command::new("git")
-        .args(&["push", "origin", &String::from_utf8(current_branch.stdout)?])
+        .args(&["push", "origin", &current_branch_text.trim()])
         .stdout(Stdio::piped())
         .output()?;
     let pr_re = Regex::new(r"remote:.*(https.*)\n.*")?;
