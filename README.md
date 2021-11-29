@@ -9,8 +9,15 @@ Currently tested only on mac (prior to M1 chip).
 
 Note: You have to have rust installed with cargo to be able to install this utility.
 
+### From Github (this repository)
+
 1. Clone the repo
 2. Run `make install` from the repo's directory
+
+### From crates.io with Cargo
+
+1. Run `cargo install gitopen`  
+   (From [The Book](https://doc.rust-lang.org/book/ch14-04-installing-binaries.html): "All binaries installed with `cargo install` are stored in the installation root’s bin folder. If you installed Rust using rustup.rs and don’t have any custom configurations, this directory will be `$HOME/.cargo/bin`. Ensure that directory is in your `$PATH` to be able to run programs you’ve installed with `cargo install`.")
 
 # Usage
 
