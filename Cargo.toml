@@ -14,6 +14,7 @@ repository = "https://github.com/oren0e/gitopen"
 readme = "README.md"
 keywords = ["git", "github", "pull-request", "pull request", "repository", "gitlab", "bitbucket"]
 categories = ["command-line-utilities", "development-tools"]
+exclude = [".github/*", ".gitignore"]
 
 
 [dependencies]
