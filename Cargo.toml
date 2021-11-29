@@ -1,8 +1,20 @@
 [package]
 name = "gitopen"
 version = "1.1.1"
-authors = ["oren0e <none>"]
+authors = ["Oren Epshtain"]
 edition = "2018"
+license-file = "LICENSE"
+description = """
+Command line utility to open a git repository's web page from terminal,
+as well as pull requests in the browser after the first push.
+"""
+homepage = "https://github.com/oren0e/gitopen"
+documentation = "https://github.com/oren0e/gitopen"
+repository = "https://github.com/oren0e/gitopen"
+readme = "README.md"
+keywords = ["git", "github", "pull-request", "pull request", "repository", "gitlab", "bitbucket"]
+categories = ["command-line-utilities", "development-tools"]
+
 
 [dependencies]
 webbrowser = "0.5.5"
