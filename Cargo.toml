@@ -12,7 +12,7 @@ homepage = "https://github.com/oren0e/gitopen"
 documentation = "https://github.com/oren0e/gitopen"
 repository = "https://github.com/oren0e/gitopen"
 readme = "README.md"
-keywords = ["git", "github", "pull-request", "repository", "gitlab", "bitbucket"]
+keywords = ["git", "github", "pull-request", "repository", "gitlab"]
 categories = ["command-line-utilities", "development-tools"]
 exclude = [".github/*", ".gitignore"]
 
