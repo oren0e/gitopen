@@ -11,7 +11,7 @@ pub fn open_repo() -> AnyhowResult<()> {
         .output()?;
 
     let stdout = String::from_utf8(git_repo.stdout)?;
-    let parsed_url = parse_url_from_git(stdout)?;
+    let parsed_url = parse_url_from_git(&stdout)?;
     webbrowser::open(&parsed_url)?;
     Ok(())
 }
