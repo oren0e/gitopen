@@ -28,6 +28,10 @@ pub fn parse_url_from_git(s: &str) -> AnyhowResult<String> {
     Ok(result)
 }
 
+pub fn get_commit_link(repo_url: String, commit_sha: &str) -> String {
+    repo_url + &"/commit/".to_owned() + &commit_sha.to_owned()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -51,5 +55,17 @@ mod tests {
         let git_repo = "git@git.foo.com:project/repo.git";
         let result_url = parse_url_from_git(git_repo).unwrap();
         assert_eq!(result_url, "https://git.foo.com/project/repo");
+    }
+
+    #[test]
+    fn test_get_commit_link() {
+        let git_repo = "git@git.foo.com:project/repo.git";
+        let commit_sha = "998a1b33f600914";
+        let git_url = parse_url_from_git(git_repo).unwrap();
+        let commit_link = get_commit_link(git_url, commit_sha);
+        assert_eq!(
+            commit_link,
+            "https://git.foo.com/project/repo/commit/998a1b33f600914"
+        );
     }
 }
