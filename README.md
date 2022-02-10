@@ -21,9 +21,10 @@ Note: You have to have rust installed with cargo to be able to install this util
 
 # Usage
 
-There are 2 basic usages:
+Basic usages:
 
 - When in git repository in terminal, run `gitopen`.
-- After you've opened a branch and you are ready to push and open a PR, run `gitopen -p`. This will push the changes to the current branch and open the PR in the browser.
+- After you've opened a branch and you are ready to push and open a PR, run `gitopen -p`. This will push the changes to the current branch and open the PR in the browser. This can be done at any stage during the work on the PR, not just when you're making the first push.
+- You can open a specific commit. Use `gitopen -c COMMIT` where COMMIT is the commit SHA.
 
 For help, use `gitopen --help`
