@@ -1,10 +1,10 @@
-use crate::match_logic::parse_url_from_git;
+use crate::match_logic::{get_commit_link, parse_url_from_git};
 use anyhow::anyhow;
 use anyhow::Result as AnyhowResult;
 use regex::Regex;
 use std::process::{Command, Stdio};
 
-pub fn open_repo() -> AnyhowResult<()> {
+fn get_parsed_url() -> AnyhowResult<String> {
     let git_repo = Command::new("git")
         .args(&["config", "--get", "remote.origin.url"])
         .stdout(Stdio::piped())
@@ -12,7 +12,21 @@ pub fn open_repo() -> AnyhowResult<()> {
 
     let stdout = String::from_utf8(git_repo.stdout)?;
     let parsed_url = parse_url_from_git(&stdout)?;
+
+    Ok(parsed_url)
+}
+
+pub fn open_repo() -> AnyhowResult<()> {
+    let parsed_url = get_parsed_url()?;
     webbrowser::open(&parsed_url)?;
+    Ok(())
+}
+
+pub fn open_commit(commit_sha: &str) -> AnyhowResult<()> {
+    let parsed_url = get_parsed_url()?;
+    let commit_link = get_commit_link(parsed_url, commit_sha);
+
+    webbrowser::open(&commit_link)?;
     Ok(())
 }
 
