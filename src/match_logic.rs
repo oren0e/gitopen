@@ -9,10 +9,10 @@ fn is_https(s: &str) -> bool {
     false
 }
 
-pub fn parse_url_from_git(s: String) -> AnyhowResult<String> {
+pub fn parse_url_from_git(s: &str) -> AnyhowResult<String> {
     let re = Regex::new(r"((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@:/\-~]+)(\.git)(/)?")?;
     let url_parts = re
-        .captures(&s)
+        .captures(s)
         .ok_or_else(|| anyhow!("Git repository not found"))?;
     if is_https(&url_parts[1]) {
         return Ok(s.trim().to_string());
@@ -34,21 +34,21 @@ mod tests {
 
     #[test]
     fn test_github_parsing() {
-        let git_repo = "git@github.com:dtolnay/anyhow.git".to_string();
+        let git_repo = "git@github.com:dtolnay/anyhow.git";
         let result_url = parse_url_from_git(git_repo).unwrap();
         assert_eq!(result_url, "https://github.com/dtolnay/anyhow");
     }
 
     #[test]
     fn test_github_https_parsing() {
-        let git_repo = "https://github.com/oren0e/gitopen.git".to_string();
+        let git_repo = "https://github.com/oren0e/gitopen.git";
         let result_url = parse_url_from_git(git_repo).unwrap();
         assert_eq!(result_url, "https://github.com/oren0e/gitopen.git");
     }
 
     #[test]
     fn test_gitlab_parsing() {
-        let git_repo = "git@git.foo.com:project/repo.git".to_string();
+        let git_repo = "git@git.foo.com:project/repo.git";
         let result_url = parse_url_from_git(git_repo).unwrap();
         assert_eq!(result_url, "https://git.foo.com/project/repo");
     }
