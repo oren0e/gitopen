@@ -26,5 +26,10 @@ Basic usages:
 - When in git repository in terminal, run `gitopen`.
 - After you've opened a branch and you are ready to push and open a PR, run `gitopen -p`. This will push the changes to the current branch and open the PR in the browser. This can be done at any stage during the work on the PR, not just when you're making the first push.
 - You can open a specific commit. Use `gitopen -c COMMIT` where COMMIT is the commit SHA.
+- You can open a specific line number of a file. Use `gitopen -l <PATH TO FILE>:<LINE NUMBER>`(note that you should use the `:` separator between the file path and the line number). Example:
+
+```
+gitopen -l /src/main.rs:10
+```
 
 For help, use `gitopen --help`
