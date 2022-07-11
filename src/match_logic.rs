@@ -53,17 +53,24 @@ pub fn parse_path_and_line_arg(arg: &str, split_char: char) -> AnyhowResult<File
         let mut iterator = arg.split(split_char);
         let file_at_line = FileAtLine::new(
             iterator.next().ok_or_else(|| {
-                anyhow!("Error parsing input. Format is <path-to-file>:<line-number>")
+                anyhow!(format!(
+                    "Error parsing input. Format is <path-to-file>{}<line-number>",
+                    split_char
+                ))
             })?,
             iterator.next().ok_or_else(|| {
-                anyhow!("Error parsing input. Format is <path-to-file>:<line-number>")
+                anyhow!(format!(
+                    "Error parsing input. Format is <path-to-file>{}<line-number>",
+                    split_char
+                ))
             })?,
         );
         return Ok(file_at_line);
     }
-    Err(anyhow!(
-        "Split character not found! Format is <path-to-file>:<line-number>"
-    ))
+    Err(anyhow!(format!(
+        "Split character not found! Format is <path-to-file>{}<line-number>",
+        split_char
+    )))
 }
 
 fn get_main_branch_name(output: &str) -> AnyhowResult<String> {
