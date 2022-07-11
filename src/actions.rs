@@ -1,9 +1,12 @@
-use crate::match_logic::{get_commit_link, parse_url_from_git};
+use crate::match_logic::{
+    get_commit_link, get_line_number_link, parse_path_and_line_arg, parse_url_from_git,
+};
 use anyhow::anyhow;
 use anyhow::Result as AnyhowResult;
 use regex::Regex;
 use std::process::{Command, Stdio};
 
+// TODO: Add caching (`cached` crate)
 fn get_parsed_url() -> AnyhowResult<String> {
     let git_repo = Command::new("git")
         .args(&["config", "--get", "remote.origin.url"])
@@ -27,6 +30,16 @@ pub fn open_commit(commit_sha: &str) -> AnyhowResult<()> {
     let commit_link = get_commit_link(parsed_url, commit_sha);
 
     webbrowser::open(&commit_link)?;
+    Ok(())
+}
+
+pub fn open_at_line_number(input: &str) -> AnyhowResult<()> {
+    let file_at_line = parse_path_and_line_arg(input, ':')?;
+    let parsed_url = &get_parsed_url()?;
+    let line_number_link =
+        get_line_number_link(parsed_url, file_at_line.filepath, file_at_line.line_number)?;
+
+    webbrowser::open(&line_number_link)?;
     Ok(())
 }
 

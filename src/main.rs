@@ -1,6 +1,6 @@
 use clap::{crate_version, App, Arg};
 
-use crate::actions::{open_commit, open_repo, push_and_open_pr};
+use crate::actions::{open_at_line_number, open_commit, open_repo, push_and_open_pr};
 use anyhow::anyhow;
 use anyhow::Result as AnyhowResult;
 
@@ -26,6 +26,14 @@ fn main() -> AnyhowResult<()> {
                 .takes_value(true)
                 .help("Opens the specified commit"),
         )
+        .arg(
+            Arg::with_name("open_line_number")
+                .short("l")
+                .long("path-and-line")
+                .value_name("PATH AND LINE")
+                .takes_value(true)
+                .help("Open the specified filepath at the specified line number"),
+        )
         .get_matches();
     if matches.is_present("push_and_pr") {
         push_and_open_pr()?;
@@ -36,6 +44,13 @@ fn main() -> AnyhowResult<()> {
                 .value_of("open_commit")
                 .ok_or_else(|| anyhow!("Must supply a commit SHA"))?,
         )
+    } else if matches.is_present("open_line_number") {
+        open_at_line_number(
+            matches
+                .value_of("open_line_number")
+                .ok_or_else(|| anyhow!("Please supply '<filepath>:<line-number>'"))?,
+        )?;
+        Ok(())
     } else {
         open_repo()?;
         Ok(())
