@@ -29,7 +29,7 @@ pub fn parse_url_from_git(s: &str) -> AnyhowResult<String> {
 }
 
 pub fn get_commit_link(repo_url: String, commit_sha: &str) -> String {
-    repo_url + &"/commit/".to_owned() + &commit_sha.to_owned()
+    repo_url + "/commit/" + commit_sha
 }
 
 #[cfg(test)]

@@ -38,7 +38,7 @@ pub fn push_and_open_pr() -> AnyhowResult<()> {
     let current_branch_text = &String::from_utf8(current_branch.stdout)?;
     let current_branch_text_stripped = current_branch_text.trim();
     let output_from_push = Command::new("git")
-        .args(&["push", "origin", &current_branch_text_stripped])
+        .args(&["push", "origin", current_branch_text_stripped])
         .stderr(Stdio::piped())
         .output()?;
     let pr_re = Regex::new(r"remote:.*(https\S*)\s*\n")?;
@@ -69,7 +69,7 @@ remote:
 To github.com:tobiasbueschel/awesome-pokemon.git
  * [new branch]      feat/add-more-pokemons -> feat/add-more-pokemons"#;
         let re = Regex::new(r"remote:.*(https\S*)\s*\n").unwrap();
-        let captured = re.captures(&output).unwrap();
+        let captured = re.captures(output).unwrap();
         println!("{:?}", &captured[1]);
         assert!(&captured[1].starts_with("https"));
         assert!(&captured[1].ends_with("add-more-pokemons"));
