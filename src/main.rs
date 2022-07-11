@@ -1,4 +1,3 @@
-extern crate clap;
 use clap::{crate_version, App, Arg};
 
 use crate::actions::{open_commit, open_repo, push_and_open_pr};
