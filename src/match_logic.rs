@@ -73,25 +73,21 @@ pub fn parse_path_and_line_arg(arg: &str, split_char: char) -> AnyhowResult<File
     )))
 }
 
-fn get_main_branch_name(output: &str) -> AnyhowResult<String> {
-    let re = Regex::new(r"(?s:.)*HEAD branch: (\w+)")?;
-    let captured = re
-        .captures(output)
-        .ok_or_else(|| anyhow!("Main branch not found"))?;
-    Ok(captured[1].to_owned())
+fn get_current_branch_name() -> AnyhowResult<String> {
+    let git_branch = Command::new("git")
+        .args(&["symbolic-ref", "--short", "HEAD"])
+        .stdout(Stdio::piped())
+        .output()?;
+    let stdout = String::from_utf8(git_branch.stdout)?.trim_end().to_string();
+
+    Ok(stdout)
 }
 
 pub fn get_line_number_link(repo_url: &str, path: &str, line_number: &str) -> AnyhowResult<String> {
-    let git_remote = Command::new("git")
-        .args(&["remote", "show", "origin"])
-        .stdout(Stdio::piped())
-        .output()?;
-
-    let stdout = String::from_utf8(git_remote.stdout)?;
-    let main_branch = get_main_branch_name(&stdout)?;
+    let current_branch = get_current_branch_name()?;
     Ok(format!(
         "{}/blob/{}/{}#L{}",
-        repo_url, main_branch, path, line_number,
+        repo_url, current_branch, path, line_number,
     ))
 }
 
@@ -130,35 +126,6 @@ mod tests {
             commit_link,
             "https://git.foo.com/project/repo/commit/998a1b33f600914"
         );
-    }
-
-    #[test]
-    fn test_get_main_branch_name() {
-        let output = r#"
-* remote origin
-  Fetch URL: git@github.com:oren0e/gitopen.git
-  Push  URL: git@github.com:oren0e/gitopen.git
-  HEAD branch: main
-  Remote branches:
-    main                                               tracked
-    refs/remotes/origin/Bump_regex_crate_version       stale (use 'git remote prune' to remove)
-    refs/remotes/origin/Feature/open_commit            stale (use 'git remote prune' to remove)
-    refs/remotes/origin/Feature/push_and_open_pr       stale (use 'git remote prune' to remove)
-    refs/remotes/origin/Fix/work_with_gitlab           stale (use 'git remote prune' to remove)
-    refs/remotes/origin/Refactor/str_instead_of_string stale (use 'git remote prune' to remove)
-    refs/remotes/origin/test/push-pr                   stale (use 'git remote prune' to remove)
-  Local branches configured for 'git pull':
-    Bump_regex_crate_version       merges with remote Bump_regex_crate_version
-    Feature/open_commit            merges with remote Feature/open_commit
-    Feature/push_and_open_pr       merges with remote Feature/push_and_open_pr
-    Fix/work_with_gitlab           merges with remote Fix/work_with_gitlab
-    Refactor/str_instead_of_string merges with remote Refactor/str_instead_of_string
-    main                           merges with remote main
-  Local ref configured for 'git push':
-    main pushes to main (up to date)
-            "#;
-        let main_branch = get_main_branch_name(output).unwrap();
-        assert_eq!(main_branch, "main".to_owned());
     }
 
     #[test]
