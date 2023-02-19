@@ -9,7 +9,7 @@ use std::process::{Command, Stdio};
 // TODO: Add caching (`cached` crate)
 fn get_parsed_url() -> AnyhowResult<String> {
     let git_repo = Command::new("git")
-        .args(&["config", "--get", "remote.origin.url"])
+        .args(["config", "--get", "remote.origin.url"])
         .stdout(Stdio::piped())
         .output()?;
 
@@ -45,13 +45,13 @@ pub fn open_at_line_number(input: &str) -> AnyhowResult<()> {
 
 pub fn push_and_open_pr() -> AnyhowResult<()> {
     let current_branch = Command::new("git")
-        .args(&["branch", "--show-current"])
+        .args(["branch", "--show-current"])
         .stdout(Stdio::piped())
         .output()?;
     let current_branch_text = &String::from_utf8(current_branch.stdout)?;
     let current_branch_text_stripped = current_branch_text.trim();
     let output_from_push = Command::new("git")
-        .args(&["push", "origin", current_branch_text_stripped])
+        .args(["push", "origin", current_branch_text_stripped])
         .stderr(Stdio::piped())
         .output()?;
     let pr_re = Regex::new(r"remote:.*(https\S*)\s*\n")?;
