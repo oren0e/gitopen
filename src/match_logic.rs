@@ -25,8 +25,15 @@ fn is_https(s: &str) -> bool {
     false
 }
 
+fn remove_git_suffix(s: &str) -> &str {
+    match s.strip_suffix(".git") {
+        Some(value) => value,
+        None => s,
+    }
+}
+
 pub fn parse_url_from_git(s: &str) -> AnyhowResult<String> {
-    let re = Regex::new(r"((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@:/\-~]+)(\.git)(/)?")?;
+    let re = Regex::new(r"((git|ssh|http(s)?)|(git@[\w\.-]+))(:(//)?)([\w\.@:/\-~]+)(\.git)?(/)?")?;
     let url_parts = re
         .captures(s)
         .ok_or_else(|| anyhow!("Git repository not found"))?;
@@ -38,9 +45,10 @@ pub fn parse_url_from_git(s: &str) -> AnyhowResult<String> {
         .captures(&url_parts[1])
         .ok_or_else(|| anyhow!("Regex error capturing ssh domain"))?;
 
-    let result: String =
-        "https://".to_string() + &match_domain[1].to_string() + r"/" + &url_parts[7].to_string();
-
+    let result: String = "https://".to_string()
+        + &match_domain[1].to_string()
+        + r"/"
+        + remove_git_suffix(&url_parts[7]);
     Ok(result)
 }
 
@@ -142,5 +150,22 @@ mod tests {
     fn test_parse_path_and_line_arg_failure() {
         let sad_case = "my-proj/src/var/main.rs90";
         let _sad_result = parse_path_and_line_arg(sad_case, ':').unwrap();
+    }
+
+    #[test]
+    fn test_no_git_suffix() {
+        let git_repo = "git@git.company.com:project/repo_name";
+        let result_url = parse_url_from_git(git_repo).unwrap();
+        assert_eq!(result_url, "https://git.company.com/project/repo_name");
+    }
+
+    #[test]
+    fn test_dash_in_org_name() {
+        let git_repo = "git@git.food-supplier.com:project/repo_name";
+        let result_url = parse_url_from_git(git_repo).unwrap();
+        assert_eq!(
+            result_url,
+            "https://git.food-supplier.com/project/repo_name"
+        );
     }
 }
