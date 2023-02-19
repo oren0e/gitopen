@@ -1,6 +1,6 @@
 [package]
 name = "gitopen"
-version = "1.3.1"
+version = "1.3.2"
 authors = ["Oren Epshtain"]
 edition = "2018"
 license-file = "LICENSE"
