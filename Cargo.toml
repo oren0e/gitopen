@@ -18,9 +18,9 @@ exclude = [".github/*", ".gitignore"]
 
 
 [dependencies]
-webbrowser = "0.5.5"
-anyhow = "1.0.44"
-regex = "1.6.0"
+webbrowser = "0.8.7"
+anyhow = "1.0.69"
+regex = "1.7.1"
 clap = "2.33.3"
 
 [profile.dev]
