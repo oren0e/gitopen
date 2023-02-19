@@ -45,10 +45,8 @@ pub fn parse_url_from_git(s: &str) -> AnyhowResult<String> {
         .captures(&url_parts[1])
         .ok_or_else(|| anyhow!("Regex error capturing ssh domain"))?;
 
-    let result: String = "https://".to_string()
-        + &match_domain[1].to_string()
-        + r"/"
-        + remove_git_suffix(&url_parts[7]);
+    let result: String =
+        "https://".to_string() + &match_domain[1] + r"/" + remove_git_suffix(&url_parts[7]);
     Ok(result)
 }
 
@@ -83,7 +81,7 @@ pub fn parse_path_and_line_arg(arg: &str, split_char: char) -> AnyhowResult<File
 
 fn get_current_branch_name() -> AnyhowResult<String> {
     let git_branch = Command::new("git")
-        .args(&["symbolic-ref", "--short", "HEAD"])
+        .args(["symbolic-ref", "--short", "HEAD"])
         .stdout(Stdio::piped())
         .output()?;
     let stdout = String::from_utf8(git_branch.stdout)?.trim_end().to_string();
