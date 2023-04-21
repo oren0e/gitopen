@@ -4,12 +4,45 @@ use crate::match_logic::{
 use anyhow::anyhow;
 use anyhow::Result as AnyhowResult;
 use regex::Regex;
+use std::io::{Error, ErrorKind};
 use std::process::{Command, Stdio};
 
-// TODO: Add caching (`cached` crate)
-fn get_parsed_url() -> AnyhowResult<String> {
+fn get_local_branch_name() -> AnyhowResult<String> {
     let git_repo = Command::new("git")
-        .args(["config", "--get", "remote.origin.url"])
+        .args(["symbolic-ref", "HEAD"])
+        .stdout(Stdio::piped())
+        .output()?;
+
+    let stdout = String::from_utf8(git_repo.stdout)?;
+    if stdout.starts_with("refs/heads/") {
+        Ok(stdout[11..].trim().to_string())
+    } else {
+        Err(Error::new(ErrorKind::Other, "oh no!").into())
+    }
+}
+
+fn get_remote_branch_name(local_branch_name: String) -> AnyhowResult<String> {
+    let git_repo = Command::new("git")
+        .args([
+            "config",
+            "--get",
+            &format!("branch.{}.remote", local_branch_name),
+        ])
+        .stdout(Stdio::piped())
+        .output()?;
+
+    let stdout = String::from_utf8(git_repo.stdout)?.trim().to_string();
+    Ok(stdout)
+}
+
+// TODO: Add caching (`cached` crate)
+fn get_parsed_url(remote_branch_name: String) -> AnyhowResult<String> {
+    let git_repo = Command::new("git")
+        .args([
+            "config",
+            "--get",
+            &format!("remote.{}.url", remote_branch_name),
+        ])
         .stdout(Stdio::piped())
         .output()?;
 
@@ -20,13 +53,17 @@ fn get_parsed_url() -> AnyhowResult<String> {
 }
 
 pub fn open_repo() -> AnyhowResult<()> {
-    let parsed_url = get_parsed_url()?;
+    let local_branch_name = get_local_branch_name()?;
+    let remote_branch_name = get_remote_branch_name(local_branch_name)?;
+    let parsed_url = get_parsed_url(remote_branch_name)?;
     webbrowser::open(&parsed_url)?;
     Ok(())
 }
 
 pub fn open_commit(commit_sha: &str) -> AnyhowResult<()> {
-    let parsed_url = get_parsed_url()?;
+    let local_branch_name = get_local_branch_name()?;
+    let remote_branch_name = get_remote_branch_name(local_branch_name)?;
+    let parsed_url = get_parsed_url(remote_branch_name)?;
     let commit_link = get_commit_link(parsed_url, commit_sha);
 
     webbrowser::open(&commit_link)?;
@@ -35,9 +72,11 @@ pub fn open_commit(commit_sha: &str) -> AnyhowResult<()> {
 
 pub fn open_at_line_number(input: &str) -> AnyhowResult<()> {
     let file_at_line = parse_path_and_line_arg(input, ':')?;
-    let parsed_url = &get_parsed_url()?;
+    let local_branch_name = get_local_branch_name()?;
+    let remote_branch_name = get_remote_branch_name(local_branch_name)?;
+    let parsed_url = get_parsed_url(remote_branch_name)?;
     let line_number_link =
-        get_line_number_link(parsed_url, file_at_line.filepath, file_at_line.line_number)?;
+        get_line_number_link(&parsed_url, file_at_line.filepath, file_at_line.line_number)?;
 
     webbrowser::open(&line_number_link)?;
     Ok(())
