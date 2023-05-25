@@ -1,6 +1,8 @@
 use clap::{crate_version, App, Arg};
 
-use crate::actions::{open_at_line_number, open_commit, open_repo, push_and_open_pr};
+use crate::actions::{
+    open_at_line_number, open_commit, open_remote_repo, open_repo, push_and_open_pr,
+};
 use anyhow::anyhow;
 use anyhow::Result as AnyhowResult;
 
@@ -34,6 +36,14 @@ fn main() -> AnyhowResult<()> {
                 .takes_value(true)
                 .help("Open the specified filepath at the specified line number"),
         )
+        .arg(
+            Arg::with_name("open_remote_repo")
+                .short("r")
+                .long("remote")
+                .value_name("remote_repo")
+                .takes_value(true)
+                .help("Open the repo from the defined remote (e.g. upstream)"),
+        )
         .get_matches();
     if matches.is_present("push_and_pr") {
         push_and_open_pr()?;
@@ -49,6 +59,13 @@ fn main() -> AnyhowResult<()> {
             matches
                 .value_of("open_line_number")
                 .ok_or_else(|| anyhow!("Please supply '<filepath>:<line-number>'"))?,
+        )?;
+        Ok(())
+    } else if matches.is_present("open_remote_repo") {
+        open_remote_repo(
+            matches
+                .value_of("open_remote_repo")
+                .ok_or_else(|| anyhow!("Please supply a remote name"))?,
         )?;
         Ok(())
     } else {
