@@ -38,6 +38,6 @@ Basic usages:
 > gitopen -r upstream
 ```
 
-    Note that `gitopen -r origin` is the same as `gitopen`.
+Note that `gitopen -r origin` is the same as `gitopen`.
 
 For help, use `gitopen --help`
