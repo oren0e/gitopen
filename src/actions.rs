@@ -81,7 +81,7 @@ pub fn push_and_open_pr() -> AnyhowResult<()> {
     let output_from_push_text = String::from_utf8(output_from_push.stderr)?;
     let captured = pr_re
         .captures(&output_from_push_text)
-        .ok_or_else(|| anyhow!("Error capturing PR url"))?;
+        .ok_or_else(|| anyhow!("Error capturing PR url: {}", &output_from_push_text))?;
     webbrowser::open(&captured[1])?;
     Ok(())
 }
