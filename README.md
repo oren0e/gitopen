@@ -32,4 +32,12 @@ Basic usages:
 > gitopen -l /src/main.rs:10
 ```
 
+- If you've added a remote (other than `origin` which is the default) e.g. for a forked repository so the remote is the original repository URL, you can use gitopen to open that remote by specifying its name, for example:
+
+```
+> gitopen -r upstream
+```
+
+    Note that `gitopen -r origin` is the same as `gitopen`.
+
 For help, use `gitopen --help`
