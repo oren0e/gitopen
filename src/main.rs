@@ -40,7 +40,7 @@ fn main() -> AnyhowResult<()> {
             Arg::with_name("open_remote_repo")
                 .short("r")
                 .long("remote")
-                .value_name("remote_repo")
+                .value_name("remote_name")
                 .takes_value(true)
                 .help("Open the repo from the defined remote (e.g. upstream)"),
         )
