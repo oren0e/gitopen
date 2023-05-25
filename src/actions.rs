@@ -6,7 +6,6 @@ use anyhow::Result as AnyhowResult;
 use regex::Regex;
 use std::process::{Command, Stdio};
 
-// TODO: Add caching (`cached` crate)
 fn get_parsed_url() -> AnyhowResult<String> {
     let git_repo = Command::new("git")
         .args(["config", "--get", "remote.origin.url"])
@@ -19,8 +18,32 @@ fn get_parsed_url() -> AnyhowResult<String> {
     Ok(parsed_url)
 }
 
+fn get_parsed_remote_url(remote_name: &str) -> AnyhowResult<String> {
+    if remote_name == "origin" {
+        println!("Usage of --remote with `origin` detected, use `gitopen` instead");
+    }
+    let git_repo = Command::new("git")
+        .args(["config", "--get", &format!("remote.{}.url", remote_name)])
+        .stdout(Stdio::piped())
+        .output()?;
+
+    let stdout = String::from_utf8(git_repo.stdout)?;
+    if stdout.is_empty() {
+        return Err(anyhow!("Remote name {} does not exist!", remote_name));
+    }
+    let parsed_url = parse_url_from_git(&stdout)?;
+
+    Ok(parsed_url)
+}
+
 pub fn open_repo() -> AnyhowResult<()> {
     let parsed_url = get_parsed_url()?;
+    webbrowser::open(&parsed_url)?;
+    Ok(())
+}
+
+pub fn open_remote_repo(remote_name: &str) -> AnyhowResult<()> {
+    let parsed_url = get_parsed_remote_url(remote_name)?;
     webbrowser::open(&parsed_url)?;
     Ok(())
 }
@@ -58,7 +81,7 @@ pub fn push_and_open_pr() -> AnyhowResult<()> {
     let output_from_push_text = String::from_utf8(output_from_push.stderr)?;
     let captured = pr_re
         .captures(&output_from_push_text)
-        .ok_or_else(|| anyhow!("Error capturing PR url"))?;
+        .ok_or_else(|| anyhow!("Error capturing PR url: {}", &output_from_push_text))?;
     webbrowser::open(&captured[1])?;
     Ok(())
 }
