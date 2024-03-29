@@ -1,6 +1,6 @@
 [package]
 name = "gitopen"
-version = "1.4.0"
+version = "1.4.1"
 authors = ["Oren Epshtain"]
 edition = "2018"
 license-file = "LICENSE"
@@ -18,9 +18,9 @@ exclude = [".github/*", ".gitignore"]
 
 
 [dependencies]
-webbrowser = "0.8.7"
-anyhow = "1.0.69"
-regex = "1.7.1"
+webbrowser = "0.8.13"
+anyhow = "1.0.70"
+regex = "1.10.3"
 clap = "2.33.3"
 
 [profile.dev]
